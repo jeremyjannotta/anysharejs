@@ -29,7 +29,7 @@
 	    this.appId_ = null;
 	    this.copyButton_ = null;
 
-	    this.JSI = $.fn.JSInterface;
+	    this.JSI = $.JSInterface;
 	    
 	    this.JSI.addCallback("onCopyButtonEvent", this.onCopyButtonEvent, this);
 	    

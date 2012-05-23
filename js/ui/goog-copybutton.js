@@ -1,6 +1,6 @@
-goog.provide('com.aol.ui.CopyButton');
+goog.provide('anyshare.ui.CopyButton');
 
-goog.require('com.aol.flash.JSInterface');
+goog.require('anyshare.flash.JSInterface');
 
 goog.require('goog.dom');
 goog.require('goog.events');
@@ -10,7 +10,7 @@ goog.require('goog.ui.Component');
 /**
  * @constructor
  */
-com.aol.ui.CopyButton = function(baseUrl, swfobject, opt_domHelper) {
+anyshare.ui.CopyButton = function(baseUrl, swfobject, opt_domHelper) {
     goog.ui.Component.call(this, opt_domHelper);
     
     this.baseUrl_ = baseUrl || "";
@@ -22,29 +22,29 @@ com.aol.ui.CopyButton = function(baseUrl, swfobject, opt_domHelper) {
     this.copyButton_ = null;
     this.copyTextHandler_ = null;
 
-    this.JSI = com.aol.flash.JSInterface;
+    this.JSI = anyshare.flash.JSInterface;
     
     this.JSI.addCallback("onCopyButtonEvent", this.onCopyButtonEvent, this);
 };
 
 // Inheritance
-goog.inherits(com.aol.ui.CopyButton, goog.ui.Component);
+goog.inherits(anyshare.ui.CopyButton, goog.ui.Component);
 
-com.aol.ui.CopyButton.swfName = 'CopyButton';
+anyshare.ui.CopyButton.swfName = 'CopyButton';
 
 /**
  * Creates an initial DOM representation for the component.
  */
-com.aol.ui.CopyButton.prototype.createDom = function() {
+anyshare.ui.CopyButton.prototype.createDom = function() {
     this.decorateInternal(this.dom_.createElement('div'));
 };
 
-com.aol.ui.CopyButton.prototype.decorateInternal = function(element) {
+anyshare.ui.CopyButton.prototype.decorateInternal = function(element) {
     // Build our UI
     this.element_ = element;   
 };
 
-com.aol.ui.CopyButton.prototype.log =function(msg) {
+anyshare.ui.CopyButton.prototype.log =function(msg) {
 	if (typeof console != "undefined" && console) {
 		console.log(msg);
 	}
@@ -56,8 +56,8 @@ com.aol.ui.CopyButton.prototype.log =function(msg) {
  * @param buttonId {object} The button DOM element the Flash button will attach to
  * @param containerId {object} The container element that is a parent to both the button and the Flash object
  */
-com.aol.ui.CopyButton.prototype.load = function(buttonId, containerId) {
-    var appName = com.aol.ui.CopyButton.swfName;
+anyshare.ui.CopyButton.prototype.load = function(buttonId, containerId) {
+    var appName = anyshare.ui.CopyButton.swfName;
     var appId = appName + "_" + buttonId;
     var placeholderId = buttonId + "_flash";
     
@@ -116,7 +116,7 @@ com.aol.ui.CopyButton.prototype.load = function(buttonId, containerId) {
 };
 
 
-com.aol.ui.CopyButton.prototype.onCopyButtonReady = function(buttonId) {
+anyshare.ui.CopyButton.prototype.onCopyButtonReady = function(buttonId) {
     if (!this.ready && buttonId == this.buttonId_) {
         this.ready = true;
         this.copyButton_ = this.copyButton_ || goog.dom.getElement(this.appId_);
@@ -126,7 +126,7 @@ com.aol.ui.CopyButton.prototype.onCopyButtonReady = function(buttonId) {
     }
 };
 
-com.aol.ui.CopyButton.prototype.onCopyButtonEvent = function(type, buttonId, copyText) {
+anyshare.ui.CopyButton.prototype.onCopyButtonEvent = function(type, buttonId, copyText) {
 	if (buttonId == this.buttonId_) {
 	    this.log("onCopyButtonEvent: ["+buttonId+"] "+type+(type=="copied"?" '"+copyText+"'":""));
 	    switch(type) {
@@ -151,11 +151,11 @@ com.aol.ui.CopyButton.prototype.onCopyButtonEvent = function(type, buttonId, cop
 	}
 };
 
-com.aol.ui.CopyButton.prototype.onCopyButtonClicked = function(buttonId) {
+anyshare.ui.CopyButton.prototype.onCopyButtonClicked = function(buttonId) {
     
 };
 
-com.aol.ui.CopyButton.prototype.onCopyButtonMouseOver = function(buttonId) {
+anyshare.ui.CopyButton.prototype.onCopyButtonMouseOver = function(buttonId) {
 	if (buttonId == this.buttonId_) {
 	    var button = goog.dom.getElement(buttonId);
 	    if (button) {
@@ -165,7 +165,7 @@ com.aol.ui.CopyButton.prototype.onCopyButtonMouseOver = function(buttonId) {
 	}
 };
 
-com.aol.ui.CopyButton.prototype.onCopyButtonMouseOut = function(buttonId) {
+anyshare.ui.CopyButton.prototype.onCopyButtonMouseOut = function(buttonId) {
 	if (buttonId == this.buttonId_) {
 	    var button = goog.dom.getElement(buttonId);
 	    if (button) {
@@ -174,13 +174,13 @@ com.aol.ui.CopyButton.prototype.onCopyButtonMouseOut = function(buttonId) {
 	}
 };
 
-com.aol.ui.CopyButton.prototype.onCopyButtonTextCopied = function(buttonId, copyText) {
+anyshare.ui.CopyButton.prototype.onCopyButtonTextCopied = function(buttonId, copyText) {
 	if (buttonId == this.buttonId_) {
 		this.setCopyButtonEnabled(buttonId, true);
 	}
 };
 
-com.aol.ui.CopyButton.prototype.setCopyButtonEnabled = function(buttonId, enabled) {
+anyshare.ui.CopyButton.prototype.setCopyButtonEnabled = function(buttonId, enabled) {
 	if (buttonId == this.buttonId_) {
 	    var button = goog.dom.getElement(buttonId);
 	    if (button) {
@@ -192,7 +192,7 @@ com.aol.ui.CopyButton.prototype.setCopyButtonEnabled = function(buttonId, enable
 	}
 };
 
-com.aol.ui.CopyButton.prototype.getCopyText = function(buttonId) {
+anyshare.ui.CopyButton.prototype.getCopyText = function(buttonId) {
     var text = '';
     
     if (buttonId == this.buttonId_) {
@@ -204,20 +204,20 @@ com.aol.ui.CopyButton.prototype.getCopyText = function(buttonId) {
     return text;
 };
 
-com.aol.ui.CopyButton.prototype.setCopyText = function(text) {
+anyshare.ui.CopyButton.prototype.setCopyText = function(text) {
 	if (text && this.copyButton_) {
 		this.JSI.callFlash(this.copyButton_, "setCopyText", text);
 	}
 };
 
-com.aol.ui.CopyButton.prototype.setCopyTextHandler = function(func, context) {
+anyshare.ui.CopyButton.prototype.setCopyTextHandler = function(func, context) {
 	if (func && typeof func == "function") {
 		context = context ? context : this;
 		this.copyTextHandler_ = goog.bind(func, context);
 	}
 };
 
-com.aol.ui.CopyButton.prototype.onFlashEmbedComplete = function(callbackObj) {
+anyshare.ui.CopyButton.prototype.onFlashEmbedComplete = function(callbackObj) {
 	var type = 'flashEmbedComplete';
 	var success = callbackObj['success'] ? callbackObj['success'] : false;
 	

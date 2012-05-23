@@ -8,7 +8,8 @@
 		apiBaseUrl: 'http://api.aim.net/',
 		authToken: '',
 		devId: 'ao1sTjQGziECwN2s',
-		pageBaseUrl: location.href.substring(0, location.href.lastIndexOf('/')+1)
+		pageBaseUrl: location.href.substring(0, location.href.lastIndexOf('/')+1),
+		missingIconUrl: ''
 	};
 	
 	var AimPeopleChooser = {
@@ -25,11 +26,6 @@
 				: $('<input type="text">').appendTo($el);
 			$inputEl.addClass('aim-people-chooser-input ui-autocomplete-input');
 			
-			//var $menuEl = $el.find('.aim-people-chooser-menu');
-			//if (!$menuEl.size()) {
-			//	$menuEl = $('<div class="aim-people-chooser-menu"/>').insertAfter($inputEl);
-			//}
-
 			$el.data('AimPeopleChooser', {
 				inputEl: $inputEl,
 				menuEl: null
@@ -40,18 +36,18 @@
 		updateBuddyList : function() {
 			var $this = this;
 			
-			$.fn.AimBuddyList.init({
+			$.AimBuddyList.init({
 				apiBaseUrl: AimPeopleChooser.options.apiBaseUrl,
 				authToken: AimPeopleChooser.options.authToken,
 				devId: AimPeopleChooser.options.devId
 			});
 			
-			$.fn.AimBuddyList.on('AimBuddyListReceived', {context:$this}, function(event, bl){
+			$.AimBuddyList.on('AimBuddyListReceived', {context:$this}, function(event, bl){
 				
 				AimPeopleChooser.createMenuItems.apply($this, [bl]);
 			});
 		
-			$.fn.AimBuddyList.request();
+			$.AimBuddyList.request();
 			
 			return this;
 		},
@@ -62,14 +58,14 @@
 			var data = this.data('AimPeopleChooser');
 			if (data.inputEl) {
 			    
-				var sortedBuddyList = $.fn.AimBuddyList.getSortedBuddyList(uniqueBuddyMap);
+				var sortedBuddyList = $.AimBuddyList.getSortedBuddyList(uniqueBuddyMap);
 			    var menuSource = [];
 			    
 			    for (var i=0; i < sortedBuddyList.length; i++) {
 			    	var buddyObj = sortedBuddyList[i];
-			    	var buddyIcon = buddyObj['buddyIcon'] || AimPeopleChooser.options.pageBaseUrl + 'loadable/art/noBuddyIcon.png';
-			    	var buddyLabel = $.fn.AimBuddyList.getLabelForBuddy(buddyObj, $.fn.AimBuddyList.showAimIdIfFriendly);
-			        var buddyTitle = $.fn.AimBuddyList.getLabelForBuddy(buddyObj, true);
+			    	var buddyIcon = buddyObj['buddyIcon'] || AimPeopleChooser.options.missingIconUrl;
+			    	var buddyLabel = $.AimBuddyList.getLabelForBuddy(buddyObj, $.AimBuddyList.showAimIdIfFriendly);
+			        var buddyTitle = $.AimBuddyList.getLabelForBuddy(buddyObj, true);
 			        
 			        var iconEl = '<img src="'+buddyIcon+'" class="aim-buddy-icon"/>';
 			        

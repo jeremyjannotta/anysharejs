@@ -5,17 +5,17 @@
  * ExternalInterface does to Flash.
  * 
  * Example usage:
- * $.fn.JSInterface.addCallback("textUpdated", this.onTextUpdated, this);
+ * $.JSInterface.addCallback("textUpdated", this.onTextUpdated, this);
  * 
- * $.fn.JSInterface.addCallback("textUpdated", this.onTextUpdated, this, $.fn.JSInterface.returnType.CONCAT);
+ * $.JSInterface.addCallback("textUpdated", this.onTextUpdated, this, $.JSInterface.returnType.CONCAT);
  * 
- * $.fn.JSInterface.callFlash(this.copyButton, "setCopyText", text);
+ * $.JSInterface.callFlash(this.copyButton, "setCopyText", text);
  * 
  */
 
 (function($) { 
 	
-	$.fn.JSInterface = {
+	$.JSInterface = {
 		callbacks_ : {},
 		catastrophe : false,
 		
@@ -44,30 +44,30 @@
 		 * Use returnType to control how the result is collected when there's multiple callbacks registered with the same name.
 		 */
 		addCallback : function(name, closure, context, returnType) {
-			returnType = returnType || $.fn.JSInterface.returnType.FIRST;
+			returnType = returnType || $.JSInterface.returnType.FIRST;
 			
-			if (!$.fn.JSInterface.callbacks_[name]) {
-				$.fn.JSInterface.callbacks_[name] = { 
+			if (!$.JSInterface.callbacks_[name]) {
+				$.JSInterface.callbacks_[name] = { 
 					'func': [], 
 					'returnType' : returnType 
 				};
 			} else {
-				$.fn.JSInterface.callbacks_[name]['returnType'] = returnType;
+				$.JSInterface.callbacks_[name]['returnType'] = returnType;
 			}
 			
-			$.fn.JSInterface.callbacks_[name]['func'].push($.proxy(closure, context));
+			$.JSInterface.callbacks_[name]['func'].push($.proxy(closure, context));
 		},
 
 		/**
 		 * Call Javascript function from Flash, that has already been registered by addCallback().
 		 */
 		call : function(name) {
-			var callbacks = $.fn.JSInterface.callbacks_;
+			var callbacks = $.JSInterface.callbacks_;
 			
 			if (callbacks.hasOwnProperty(name)) {
 				var funcs = callbacks[name]['func'];
 				var returnType = callbacks[name]['returnType'];
-				var finalResult = (returnType == $.fn.JSInterface.returnType.CONCAT) ? '' : null;
+				var finalResult = (returnType == $.JSInterface.returnType.CONCAT) ? '' : null;
 				var i;
 				for (i=0; i<funcs.length; i++) {
 					var fn = funcs[i];
@@ -83,11 +83,11 @@
 						}
 
 						// Collect the result based on the returnType 
-						if (i==0 && returnType == $.fn.JSInterface.returnType.FIRST) {
+						if (i==0 && returnType == $.JSInterface.returnType.FIRST) {
 							finalResult = result;
-						} else if (i==(funcs.length-1) && returnType == $.fn.JSInterface.returnType.LAST) {
+						} else if (i==(funcs.length-1) && returnType == $.JSInterface.returnType.LAST) {
 							finalResult = result;
-						} else if (returnType == $.fn.JSInterface.returnType.CONCAT) {
+						} else if (returnType == $.JSInterface.returnType.CONCAT) {
 							finalResult += (result==null ? '' : result);
 						}
 					}
@@ -105,15 +105,15 @@
 			
 			$(instances).each(function(){
 				var instance = this;
-				var flashCallbackName = $.fn.JSInterface.flashCallbackName;
+				var flashCallbackName = $.JSInterface.flashCallbackName;
 				
 				 // Flash callback had not been added to Flash instance, so try adding manually here				
 				 if ((instance[flashCallbackName] == null) && typeof __flash__addCallback != "undefined" && __flash__addCallback != null) {
 					try {
 						if (typeof __flash__addCallback == "undefined")
 						{
-							$.fn.JSInterface.log("Adding flash callback '"+flashCallbackName+"' failed because __flash__addCallback does not exist");
-							$.fn.JSInterface.catastrophe = true;				
+							$.JSInterface.log("Adding flash callback '"+flashCallbackName+"' failed because __flash__addCallback does not exist");
+							$.JSInterface.catastrophe = true;				
 						}
 						else
 						{
@@ -121,8 +121,8 @@
 						}
 						
 					} catch (e) {
-						$.fn.JSInterface.log("Adding flash callback '"+flashCallbackName+"' failed: "+e.message);
-						$.fn.JSInterface.catastrophe = true;				
+						$.JSInterface.log("Adding flash callback '"+flashCallbackName+"' failed: "+e.message);
+						$.JSInterface.catastrophe = true;				
 					}
 				 }
 				 
@@ -130,11 +130,11 @@
 					var fn = instance[flashCallbackName];
 					var args = Array.prototype.slice.call(callArguments, 1);
 					try {
-						//$.fn.JSInterface.log("Calling '"+flashCallbackName+"' from JS into Flash ("+name+")");				
+						//$.JSInterface.log("Calling '"+flashCallbackName+"' from JS into Flash ("+name+")");				
 						return fn.apply(instance, args);
 						          
 					} catch (e) {
-						$.fn.JSInterface.log("Error calling Flash method '"+name+"': "+e.message);
+						$.JSInterface.log("Error calling Flash method '"+name+"': "+e.message);
 					}
 				 }
 			});
@@ -149,7 +149,7 @@
 	
 	// Make global reference to JSInterface callback
 	try {
-		window[$.fn.JSInterface.jsCallbackName] = $.fn.JSInterface.call;
+		window[$.JSInterface.jsCallbackName] = $.JSInterface.call;
 	} catch (e) {
 		// TODO: catch exception
 	}

@@ -265,7 +265,7 @@ package
 		{
 			if (ExternalInterface.available)
 			{
-				var fullName:String = "com.aol.Video." + name; 
+				var fullName:String = _jsCallbackName + "." + name; 
 				trace("calling direct to " + fullName);
 				
 				if(args.length == 0)

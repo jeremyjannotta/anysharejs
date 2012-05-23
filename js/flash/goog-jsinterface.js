@@ -5,16 +5,16 @@
  * ExternalInterface does to Flash.
  */
 
-goog.provide('com.aol.flash.JSInterface');
+goog.provide('anyshare.flash.JSInterface');
 
 
-com.aol.flash.JSInterface.callbacks_ = {};
-com.aol.flash.JSInterface.catastrophe = false;
+anyshare.flash.JSInterface.callbacks_ = {};
+anyshare.flash.JSInterface.catastrophe = false;
 
 /**
  * Types used to collect the callback result per name.
  */
-com.aol.flash.JSInterface.returnType = {
+anyshare.flash.JSInterface.returnType = {
 	FIRST : 'first',
 	LAST : 'last',
 	CONCAT : 'concat'
@@ -23,43 +23,43 @@ com.aol.flash.JSInterface.returnType = {
 /**
  * The global reference to the callback function where the Flash object will find it.
  */
-com.aol.flash.JSInterface.jsCallbackName = "_JSInterfaceCallback";
+anyshare.flash.JSInterface.jsCallbackName = "_JSInterfaceCallback";
 
 /**
  * The Flash function to pass all calls to Flash.
  */
-com.aol.flash.JSInterface.flashCallbackName = "callFlash";
+anyshare.flash.JSInterface.flashCallbackName = "callFlash";
 
 /**
  * Add callback for Flash to execute Javascript functions. 
  * Similar to Flash's ExternalInterface.addCallback(), but in reverse.
  * Use returnType to control how the result is collected when there's multiple callbacks registered with the same name.
  */
-com.aol.flash.JSInterface.addCallback = function(name, closure, context, returnType) {
-	returnType = goog.isDefAndNotNull(returnType) ? returnType : com.aol.flash.JSInterface.returnType.FIRST;
+anyshare.flash.JSInterface.addCallback = function(name, closure, context, returnType) {
+	returnType = goog.isDefAndNotNull(returnType) ? returnType : anyshare.flash.JSInterface.returnType.FIRST;
 	
-	if (!com.aol.flash.JSInterface.callbacks_[name]) {
-		com.aol.flash.JSInterface.callbacks_[name] = { 
+	if (!anyshare.flash.JSInterface.callbacks_[name]) {
+		anyshare.flash.JSInterface.callbacks_[name] = { 
 			'func': [], 
 			'returnType' : returnType 
 		};
 	} else {
-		com.aol.flash.JSInterface.callbacks_[name]['returnType'] = returnType;
+		anyshare.flash.JSInterface.callbacks_[name]['returnType'] = returnType;
 	}
 	
-	com.aol.flash.JSInterface.callbacks_[name]['func'].push(goog.bind(closure, context));
+	anyshare.flash.JSInterface.callbacks_[name]['func'].push(goog.bind(closure, context));
 };
 
 /**
  * Call Javascript function from Flash, that has already been registered by addCallback().
  */
-com.aol.flash.JSInterface.call = function(name) {
-	var callbacks = com.aol.flash.JSInterface.callbacks_;
+anyshare.flash.JSInterface.call = function(name) {
+	var callbacks = anyshare.flash.JSInterface.callbacks_;
 	
 	if (callbacks.hasOwnProperty(name)) {
 		var funcs = callbacks[name]['func'];
 		var returnType = callbacks[name]['returnType'];
-		var finalResult = (returnType == com.aol.flash.JSInterface.returnType.CONCAT) ? '' : null;
+		var finalResult = (returnType == anyshare.flash.JSInterface.returnType.CONCAT) ? '' : null;
 		var i;
 		for (i=0; i<funcs.length; i++) {
 			var fn = funcs[i];
@@ -75,11 +75,11 @@ com.aol.flash.JSInterface.call = function(name) {
 				}
 
 				// Collect the result based on the returnType 
-				if (i==0 && returnType == com.aol.flash.JSInterface.returnType.FIRST) {
+				if (i==0 && returnType == anyshare.flash.JSInterface.returnType.FIRST) {
 					finalResult = result;
-				} else if (i==(funcs.length-1) && returnType == com.aol.flash.JSInterface.returnType.LAST) {
+				} else if (i==(funcs.length-1) && returnType == anyshare.flash.JSInterface.returnType.LAST) {
 					finalResult = result;
-				} else if (returnType == com.aol.flash.JSInterface.returnType.CONCAT) {
+				} else if (returnType == anyshare.flash.JSInterface.returnType.CONCAT) {
 					finalResult += (result==null ? '' : result);
 				}
 			}
@@ -92,17 +92,17 @@ com.aol.flash.JSInterface.call = function(name) {
  * Wrapper function to call a Flash function from JS, using the singular flashCallbackName as a proxy function.  
  * Callback name must have already been registered in Flash via the AS method JSInterface.addCallback()
  */
-com.aol.flash.JSInterface.callFlash = function(instance, name) {
+anyshare.flash.JSInterface.callFlash = function(instance, name) {
 	if (instance) {
-		var flashCallbackName = com.aol.flash.JSInterface.flashCallbackName;
+		var flashCallbackName = anyshare.flash.JSInterface.flashCallbackName;
 		
 		 // Flash callback had not been added to Flash instance, so try adding manually here				
 		 if ((instance[flashCallbackName] == null) && goog.isDefAndNotNull(__flash__addCallback)) {
 			try {
 				if (typeof __flash__addCallback == "undefined")
 				{
-					com.aol.flash.JSInterface.log("Adding flash callback '"+flashCallbackName+"' failed because __flash__addCallback does not exist");
-					com.aol.flash.JSInterface.catastrophe = true;				
+					anyshare.flash.JSInterface.log("Adding flash callback '"+flashCallbackName+"' failed because __flash__addCallback does not exist");
+					anyshare.flash.JSInterface.catastrophe = true;				
 				}
 				else
 				{
@@ -110,8 +110,8 @@ com.aol.flash.JSInterface.callFlash = function(instance, name) {
 				}
 				
 			} catch (e) {
-				com.aol.flash.JSInterface.log("Adding flash callback '"+flashCallbackName+"' failed: "+e.message);
-				com.aol.flash.JSInterface.catastrophe = true;				
+				anyshare.flash.JSInterface.log("Adding flash callback '"+flashCallbackName+"' failed: "+e.message);
+				anyshare.flash.JSInterface.catastrophe = true;				
 			}
 		 }
 		 
@@ -119,17 +119,17 @@ com.aol.flash.JSInterface.callFlash = function(instance, name) {
 			var fn = instance[flashCallbackName];
 			var args = Array.prototype.slice.call(arguments, 1);
 			try {
-				//com.aol.flash.JSInterface.log("Calling '"+flashCallbackName+"' from JS into Flash ("+name+")");				
+				//anyshare.flash.JSInterface.log("Calling '"+flashCallbackName+"' from JS into Flash ("+name+")");				
 				return fn.apply(instance, args);
 				          
 			} catch (e) {
-				com.aol.flash.JSInterface.log("Error calling Flash method '"+name+"': "+e.message);
+				anyshare.flash.JSInterface.log("Error calling Flash method '"+name+"': "+e.message);
 			}
 		 }
 	}
 };
 
-com.aol.flash.JSInterface.log = function(msg) {
+anyshare.flash.JSInterface.log = function(msg) {
 	if (typeof console != "undefined" && console) {
 		console.log(msg);
 	}
@@ -137,7 +137,7 @@ com.aol.flash.JSInterface.log = function(msg) {
 
 // Make global reference to JSInterface callback
 try {
-	window[com.aol.flash.JSInterface.jsCallbackName] = com.aol.flash.JSInterface.call;
+	window[anyshare.flash.JSInterface.jsCallbackName] = anyshare.flash.JSInterface.call;
 } catch (e) {
 	// TODO: catch exception
 }
@@ -146,6 +146,6 @@ try {
  * Export methods and properties used outside this file
  */
 
-goog.exportSymbol('com.aol.flash.JSInterface', com.aol.flash.JSInterface);
-goog.exportSymbol('com.aol.flash.JSInterface.call', com.aol.flash.JSInterface.call);
-goog.exportSymbol('com.aol.flash.JSInterface.callFlash', com.aol.flash.JSInterface.callFlash);
+goog.exportSymbol('anyshare.flash.JSInterface', anyshare.flash.JSInterface);
+goog.exportSymbol('anyshare.flash.JSInterface.call', anyshare.flash.JSInterface.call);
+goog.exportSymbol('anyshare.flash.JSInterface.callFlash', anyshare.flash.JSInterface.callFlash);

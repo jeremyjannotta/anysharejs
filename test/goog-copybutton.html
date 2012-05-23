@@ -6,30 +6,31 @@
         <meta name="google" value="notranslate" />         
         <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 
-        <link rel="stylesheet" type="text/css" href="../assets/css/copybutton.css" /> 
+        <link rel="stylesheet" type="text/css" href="../css/copybutton.css" /> 
              
         <script src="http://ajax.googleapis.com/ajax/libs/swfobject/2.2/swfobject.js"></script>
-        <script src='http://code.jquery.com/jquery-1.7.2.js'></script>
-        <script type="text/javascript" src="../src/JSInterface-jquery.js"></script>
-        <script type="text/javascript" src="../src/ui/CopyButton-jquery.js"></script>
+        <script src='http://closure-library.googlecode.com/svn/trunk/closure/goog/base.js'></script>
         <script type="text/javascript">
-    		var copyApp = {
+            goog.require('goog.ui.Component');
+        </script>
+        <script type="text/javascript" src="../js/flash/goog-jsinterface.js"></script>
+        <script type="text/javascript" src="../js/ui/goog-copybutton.js"></script>
+        <script type="text/javascript">
+        	var copyApp = {
         		copyButton : null,
         		
         		init : function() {
-        			this.copyButton = $('#cb').CopyButton({ 
-        				baseUrl:'../../ASLabs/bin-debug/',
-        				container: 'cbContainer',
-        				copyTextHandler: $.proxy(this.copyTextHandler, this),
-        				copyEventHandler: $.proxy(this.onCopyButtonEvent, this)
-        			});
+        			this.copyButton = new anyshare.ui.CopyButton('../flash/bin-release/');
+					this.copyButton.setCopyTextHandler(this.copyTextHandler, this);
+    	        	goog.events.listen(this.copyButton, "COPY_BUTTON_EVENT", this.onCopyButtonEvent, false, this);
+    	        	
+    	        	if (!this.copyButton.ready) {
+    		    		this.copyButton.load("cb", "cbContainer");
+    		        }
         		},
         		
 	        	onCopyButtonEvent : function(event) {
 	        	    switch(event['eventType']) {
-	        	    	case "ready":
-	        	    		//this.copyButton.data('copyButton').setCopyText('foo');
-	        	    		break;
 	        	        case "click":
 	        	            this.onCopyButtonClicked(event['buttonId']);
 	        	            break;
@@ -41,15 +42,12 @@
 	        	},
 	        	
 	        	copyTextHandler : function(buttonId) {
-	        		return $('.cbText').val();
+	        		return goog.dom.getElementByClass('cbText').value;
 	        	}
         	};
-        	$(document).ready(function(){
-            	copyApp.init();
-        	});
         </script>
     </head>
-    <body>
+    <body onload="copyApp.init();">
         <div id="cbContainer" class="copyButtonContainer">
         	<button id="cb" class="copyButton">Copy Text</button>
         </div>
