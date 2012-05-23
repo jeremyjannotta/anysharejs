@@ -1,0 +1,72 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+	<title>AimPeopleChooser Test</title>
+	
+	<link href="../assets/css/ui-lightness/jquery-ui-1.8.20.custom.css" rel="stylesheet" />
+	<style>
+		.ui-autocomplete {
+			max-height: 200px;
+			overflow-y: auto;
+			/* prevent horizontal scrollbar */
+			overflow-x: hidden;
+			/* add padding to account for vertical scrollbar */
+			padding-right: 20px;
+		}
+	</style>
+	
+	<script src="http://code.jquery.com/jquery-1.7.2.js"></script>
+	<script src="http://o.aolcdn.com/os_merge/?file=/aol/jquery.openwindow-1.0.min.js&file=/aol/jquery.multiauth-2.0.js" type="text/javascript"></script>
+	<script src="../lib/jquery-ui-1.8.20.custom.js"></script>
+	<script src="../lib/jquery.ui.autocomplete.html.js"></script>
+	<script src="../src/aol/aim/aim-buddy-list.js"></script>
+	<script src="../src/share/aim/aim-people-chooser.js"></script>
+	<script>
+	
+		var app_prod = {
+			apiBaseUrl: 'http://api.aim.net/',
+			authToken: '',
+			devId: 'ao1sTjQGziECwN2s',
+			authServer: 'http://api.screenname.aol.com'
+		};
+		var app_dev = {
+			apiBaseUrl: 'http://api-red.aim.net/',
+			authToken: '',
+			devId: 'ih1fsGVypwRIWp03',
+			authServer: 'https://api-login.tred.aol.com'
+		};
+		var app = app_prod;
+		
+		$(document).on('got-token.aol-getToken', function(event, json){
+			console.log(json);
+			var response = json.json.response;
+			if (response.statusCode == 200) {
+				var token = response.data.token.a;
+				if (token) {
+					app.authToken = token;
+					
+					$(document).ready(function(){
+						$('#data').AimPeopleChooser({
+							apiBaseUrl: app.apiBaseUrl,
+							authToken: app.authToken,
+							devId: app.devId
+						})
+						.updateBuddyList();
+					});
+				}
+			}
+			
+		});
+
+		$.aolGetAuthToken({
+			devId: app.devId,
+			authServer: app.authServer
+		});
+		
+	</script>
+</head>
+<body>
+	<h1>AimPeopleChooser Test</h1>
+	<div id="data"></div>
+</body>
+</html>

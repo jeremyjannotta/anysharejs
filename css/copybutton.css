@@ -1,0 +1,44 @@
+html, body  { 
+	height:100%; 
+}
+body { margin:0; padding:0; overflow:auto; text-align:center; 
+	background-color: ${bgcolor}; }   
+object:focus { outline:none; }
+
+.copyButtonContainer {
+	position: relative;
+	width: auto;
+	height: auto;
+}
+.copyButton {
+	position: absolute;
+	top: 0;
+	left: 0;
+}
+.copyButtonFlashObject {
+	position: absolute;
+}
+
+#cb {
+	width: 100px;
+	padding: 10px;
+	background-color: #FFCC00;
+	border: none;
+}
+#cb.hover {
+	background-color: #996633;
+	color: #FFFFFF;
+}
+#cbContainer {
+	
+}
+.cbText {
+	display: block;
+	position: relative;
+	border: 1px solid #CCCCCC;
+	font-size: 1em;
+	width: 200px;
+	padding: 10px;
+	top: 50px;
+	left: 0;
+}

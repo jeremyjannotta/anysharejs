@@ -1,0 +1,56 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"> 
+
+    <head>
+        <title>Labs</title>
+        <meta name="google" value="notranslate" />         
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+
+        <link rel="stylesheet" type="text/css" href="../assets/css/copybutton.css" /> 
+             
+        <script src="http://ajax.googleapis.com/ajax/libs/swfobject/2.2/swfobject.js"></script>
+        <script src='http://closure-library.googlecode.com/svn/trunk/closure/goog/base.js'></script>
+        <script type="text/javascript">
+            goog.require('goog.ui.Component');
+        </script>
+        <script type="text/javascript" src="../src/JSInterface-goog.js"></script>
+        <script type="text/javascript" src="../src/ui/CopyButton-goog.js"></script>
+        <script type="text/javascript">
+        	var copyApp = {
+        		copyButton : null,
+        		
+        		init : function() {
+        			this.copyButton = new com.aol.ui.CopyButton('../../ASLabs/bin-debug/');
+					this.copyButton.setCopyTextHandler(this.copyTextHandler, this);
+    	        	goog.events.listen(this.copyButton, "COPY_BUTTON_EVENT", this.onCopyButtonEvent, false, this);
+    	        	
+    	        	if (!this.copyButton.ready) {
+    		    		this.copyButton.load("cb", "cbContainer");
+    		        }
+        		},
+        		
+	        	onCopyButtonEvent : function(event) {
+	        	    switch(event['eventType']) {
+	        	        case "click":
+	        	            this.onCopyButtonClicked(event['buttonId']);
+	        	            break;
+	        	    }
+	        	},
+	        	
+	        	onCopyButtonClicked : function(buttonId) {
+	        		// do something
+	        	},
+	        	
+	        	copyTextHandler : function(buttonId) {
+	        		return goog.dom.getElementByClass('cbText').value;
+	        	}
+        	};
+        </script>
+    </head>
+    <body onload="copyApp.init();">
+        <div id="cbContainer" class="copyButtonContainer">
+        	<button id="cb" class="copyButton">Copy Text</button>
+        </div>
+        <input class="cbText" type="text" name="cbText" value="I'm copied!" />
+   </body>
+</html>

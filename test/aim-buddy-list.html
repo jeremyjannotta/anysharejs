@@ -1,0 +1,58 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+	<title>AimBuddyList Test</title>
+	
+	<script src="http://code.jquery.com/jquery-1.7.2.js"></script>
+	<script src="http://o.aolcdn.com/os_merge/?file=/aol/jquery.openwindow-1.0.min.js&file=/aol/jquery.multiauth-2.0.js" type="text/javascript"></script>
+	<script src="../src/aol/aim/aim-buddy-list.js"></script>
+	<script>
+	
+		var app = {
+			apiBaseUrl: 'http://api.aim.net/',
+			authToken: '',
+			devId: 'ao1sTjQGziECwN2s'
+		};
+		
+		$(document).on('got-token.aol-getToken', function(event, json){
+			console.log(json);
+			var response = json.json.response;
+			if (response.statusCode == 200) {
+				var token = response.data.token.a;
+				if (token) {
+					app.authToken = token;
+					
+					$.fn.AimBuddyList.init({
+						apiBaseUrl: app.apiBaseUrl,
+						authToken: app.authToken,
+						devId: app.devId
+					});
+				
+					$.fn.AimBuddyList.request();
+				}
+			}
+			
+		});
+		
+		$.fn.AimBuddyList.on('AimBuddyListReceived', {context:app}, function(event, bl){
+			console.log('AimBuddyListReceived:');
+			console.log(event);
+			console.log(bl);
+			
+			$(function(){
+				$('#data').empty();
+				$('#data').append( $('<p>'+JSON.stringify(bl)+'</p>') );
+			});
+		});
+
+		$.aolGetAuthToken({
+			devId: app.devId
+		});
+		
+	</script>
+</head>
+<body>
+	<h1>AimBuddyList Test</h1>
+	<div id="data"></div>
+</body>
+</html>
