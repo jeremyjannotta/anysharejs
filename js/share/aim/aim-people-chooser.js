@@ -6,7 +6,7 @@
 	
 	var defaultOptions = {
 		apiBaseUrl: 'http://api.aim.net/',
-		authToken: '',
+		authToken: null,
 		devId: 'ao1sTjQGziECwN2s',
 		pageBaseUrl: location.href.substring(0, location.href.lastIndexOf('/')+1),
 		missingIconUrl: ''
@@ -30,24 +30,44 @@
 				inputEl: $inputEl,
 				menuEl: null
 			});
-			
+
+			$.AimBuddyList.on('AimBuddyListReceived', {context:$el}, function(event, bl){
+				
+				AimPeopleChooser.createMenuItems.apply($el, [bl]);
+			});
 		},
 		
 		updateBuddyList : function() {
 			var $this = this;
-			
-			$.AimBuddyList.init({
-				apiBaseUrl: AimPeopleChooser.options.apiBaseUrl,
-				authToken: AimPeopleChooser.options.authToken,
-				devId: AimPeopleChooser.options.devId
-			});
-			
-			$.AimBuddyList.on('AimBuddyListReceived', {context:$this}, function(event, bl){
+
+			if (!AimPeopleChooser.options.authToken) {
+				$(document).on('got-token.aol-getToken', function(event, json){
+					console.log(json);
+					var response = json.json.response;
+					if (response.statusCode == 200) {
+						var token = response.data.token.a;
+						if (token) {
+							AimPeopleChooser.options.authToken = token;
+	
+							$.AimBuddyList.init({
+								apiBaseUrl: AimPeopleChooser.options.apiBaseUrl,
+								authToken: AimPeopleChooser.options.authToken,
+								devId: AimPeopleChooser.options.devId
+							});
+							
+							$.AimBuddyList.request();
+						}
+					}
+					
+				});
 				
-				AimPeopleChooser.createMenuItems.apply($this, [bl]);
-			});
-		
-			$.AimBuddyList.request();
+				$.aolGetAuthToken({
+					devId: AimPeopleChooser.options.devId,
+					authServer: AimPeopleChooser.options.authServer
+				});
+			} else {
+				$.AimBuddyList.request();
+			}
 			
 			return this;
 		},
@@ -75,7 +95,7 @@
 			        };
 			    }
 			    
-			    $(data.inputEl).autocomplete({ 
+			    $(data.inputEl).combobox({ 
 			    	source: menuSource,
 			    	html: true
 			    });

@@ -12,10 +12,31 @@
 			overflow-x: hidden;
 			/* add padding to account for vertical scrollbar */
 			padding-right: 20px;
+			font-size: 1em;
 		}
 		.aim-buddy-icon {
 			width: 28px;
 			height: 28px;
+			margin-right: 5px;
+			vertical-align: middle;
+		}
+		.ui-combobox {
+			position: relative;
+			display: inline-block;
+		}
+		.ui-button {
+			position: absolute;
+			top: 0;
+			bottom: 0;
+			margin-left: -1px;
+			padding: 0;
+			/* adjust styles for IE 6/7 */
+			*height: 1.7em;
+			*top: 0.1em;
+		}
+		.ui-autocomplete-input {
+			margin: 0;
+			padding: 0.3em;
 		}
 	</style>
 	
@@ -23,37 +44,16 @@
 	<script src="http://o.aolcdn.com/os_merge/?file=/aol/jquery.openwindow-1.0.min.js&file=/aol/jquery.multiauth-2.0.min.js" type="text/javascript"></script>
 	<script src="../lib/jquery-ui-1.8.20.custom.js"></script>
 	<script src="../lib/jquery.ui.autocomplete.html.js"></script>
+	<script src="../lib/jquery.ui.combobox.js"></script>
 	<script src="../js/share/aim/aim-buddy-list.js"></script>
 	<script src="../js/share/aim/aim-people-chooser.js"></script>
 	<script>
 	
-		var app = {
-			apiBaseUrl: 'http://api.aim.net/',
-			authToken: '',
-			devId: 'ao1sTjQGziECwN2s',
-			authServer: 'http://api.screenname.aol.com',
-			missingIconUrl: '../images/noBuddyIcon.png'
-		};
-		
-		$(document).on('got-token.aol-getToken', function(event, json){
-			console.log(json);
-			var response = json.json.response;
-			if (response.statusCode == 200) {
-				var token = response.data.token.a;
-				if (token) {
-					app.authToken = token;
-					
-					$(document).ready(function(){
-						$('#data').AimPeopleChooser( app ).updateBuddyList();
-					});
-				}
-			}
-			
-		});
-
-		$.aolGetAuthToken({
-			devId: app.devId,
-			authServer: app.authServer
+		$(document).ready(function(){
+			$('#data').AimPeopleChooser({
+				missingIconUrl: '../images/noBuddyIcon.png'
+			})
+			.updateBuddyList();
 		});
 		
 	</script>
