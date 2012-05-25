@@ -9,16 +9,16 @@
 		authToken: null,
 		devId: 'ao1sTjQGziECwN2s',
 		pageBaseUrl: location.href.substring(0, location.href.lastIndexOf('/')+1),
-		missingIconUrl: ''
+		missingIconUrl: '',
+		successUrl: null
 	};
 	
 	var AimPeopleChooser = {
 		
 		options : null,
 			
-		init : function(customOptions) {
-			AimPeopleChooser.options = $.extend( {}, defaultOptions, customOptions );
-			
+		init : function(options) {
+			AimPeopleChooser.options = options;
 			var $el = this;
 			
 			var $inputEl = $el.get(0).nodeName == 'INPUT' 
@@ -26,9 +26,23 @@
 				: $('<input type="text">').appendTo($el);
 			$inputEl.addClass('aim-people-chooser-input ui-autocomplete-input');
 			
+			var $loginLabel = $('<span class="aim-login-label">')
+				.insertBefore($inputEl)
+				.hide();
+			
+			var $loginButton = $('<button class="aim-login-button">Login to AIM</button>')
+				.insertBefore($inputEl)
+				.multiAuth({
+					successUrl: AimPeopleChooser.options.successUrl,
+					tabs: ['aol','aim'],
+					devId: AimPeopleChooser.options.devId,
+					getTokenCallback: $.proxy(AimPeopleChooser.onTokenReceived, $el)
+				});
+			
 			$el.data('AimPeopleChooser', {
 				inputEl: $inputEl,
-				menuEl: null
+				loginButton: $loginButton,
+				loginLabel: $loginLabel
 			});
 
 			$.AimBuddyList.on('AimBuddyListReceived', {context:$el}, function(event, bl){
@@ -37,34 +51,36 @@
 			});
 		},
 		
+		onTokenReceived: function( json ){
+			var $button = this.data('AimPeopleChooser').loginButton;
+			var $label = this.data('AimPeopleChooser').loginLabel;
+
+			if (json.response.statusCode === 200) {
+				$button.html('Logout of AIM');
+				$label.html('Welcome ' + json.response.data.userData.attributes.displayName + '!')
+					.show();
+				
+				AimPeopleChooser.options.authToken = json.response.data.token.a;
+
+				$.AimBuddyList.init({
+					apiBaseUrl: AimPeopleChooser.options.apiBaseUrl,
+					authToken: AimPeopleChooser.options.authToken,
+					devId: AimPeopleChooser.options.devId
+				});
+				
+				$.AimBuddyList.request();
+				
+			} else {
+				$button.html('Login to AIM');
+				$label.empty().hide();
+			}
+		},
+		
 		updateBuddyList : function() {
 			var $this = this;
 
 			if (!AimPeopleChooser.options.authToken) {
-				$(document).on('got-token.aol-getToken', function(event, json){
-					console.log(json);
-					var response = json.json.response;
-					if (response.statusCode == 200) {
-						var token = response.data.token.a;
-						if (token) {
-							AimPeopleChooser.options.authToken = token;
-	
-							$.AimBuddyList.init({
-								apiBaseUrl: AimPeopleChooser.options.apiBaseUrl,
-								authToken: AimPeopleChooser.options.authToken,
-								devId: AimPeopleChooser.options.devId
-							});
-							
-							$.AimBuddyList.request();
-						}
-					}
-					
-				});
-				
-				$.aolGetAuthToken({
-					devId: AimPeopleChooser.options.devId,
-					authServer: AimPeopleChooser.options.authServer
-				});
+				$this.data('AimPeopleChooser').loginButton.click();
 			} else {
 				$.AimBuddyList.request();
 			}
@@ -109,9 +125,12 @@
 		$.extend(this, {
 			updateBuddyList: $.proxy(AimPeopleChooser.updateBuddyList, this)
 		});
+
+		// Merge default options with custom options
+		var customOptions = $.extend( {}, defaultOptions, options );
 		
 		// Initialize for just the first element
-		AimPeopleChooser.init.apply(this.first(), [options]);
+		AimPeopleChooser.init.apply(this.first(), [customOptions]);
 		
 		return this;
 	};
